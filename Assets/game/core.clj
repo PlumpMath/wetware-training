@@ -1,8 +1,10 @@
 (ns game.core
  (require [arcadia.core :as a]
           [arcadia.linear :as l]
-          [tween.core :refer :all])
- (import [UnityEngine Animator AudioSource Resources Quaternion Renderer Color]))
+          [tween.core :refer :all]
+          [game.ui :as ui]
+          [game.glitch :as glitch])
+ (import [UnityEngine Animator AudioSource Resources Quaternion Renderer Color RectTransform]))
 
 (defn emote [emotion wait-duration]
  (let [syd-bod (a/object-named "sydneyBody")
@@ -78,13 +80,7 @@
   (timeline [(wait 2)
              (tween {:position (l/v3 2 2.3 4)} syd 2 {:in :pow3 :out :pow3})])))
 
-(defn sydney-input []
- (a/hook+ (a/object-named "sydney") :on-pointer-enter
-  (fn [go ptr]
-   (a/log "bork"))))
-       
 (defn init-scene [_]
- (sydney-input)
  (sydney-hover)
  (sydney-entrance)
  (timeline
@@ -97,5 +93,17 @@
    (wait 5.0)
    #(do (emote :aside 2) false)
    (wait 7.0)
-   #(do (emote :pantomime 2) false)]))
+   #(do (emote :pantomime 2) false)
+   (wait 7.0)
+   #(do (ui/add-interface) false)
+   (wait 1)
+   #(do (ui/add-button (fn [])) false)
+   (wait 0.5)
+   #(do (ui/add-button (fn [])) false)
+   (wait 7.0)
+   #(do (ui/remove-interface) false)
+   (wait 3.0)
+   #(do (glitch/set-depth-clearing :nothing) false)
+   (wait 3.0)
+   #(do (glitch/set-depth-clearing :skybox) false)]))
  
